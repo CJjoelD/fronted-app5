@@ -2,34 +2,66 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Frontend en la nube</title>
+  <title>MiniStore Cloud</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="card">
-    <h1>Frontend desplegado en Vercel ☁️</h1>
-    <p id="mensaje">Cargando backend...</p>
-  </div>
+<div class="card">
+  <h1>🛒 MiniStore Cloud</h1>
+
+  <h2>Productos</h2>
+  <ul id="listaProductos"></ul>
+
+  <h2>➕ Agregar producto</h2>
+  <input id="nombre" placeholder="Nombre">
+  <input id="precio" type="number" step="0.01" placeholder="Precio">
+  <input id="stock" type="number" placeholder="Stock">
+  <button onclick="agregarProducto()">Agregar</button>
+
+  <p id="respuesta"></p>
+</div>
 
 <script>
-  const backendURL = "https://backend-render-7qb1.onrender.com/mensaje";
+const backendURL = "https://backend-render-7qb1.onrender.com";
 
-  fetch(backendURL)
-    .then(response => response.json())
+function cargarProductos() {
+  fetch(`${backendURL}/productos`)
+    .then(res => res.json())
     .then(data => {
-      document.getElementById("mensaje").innerHTML = `
-        <strong>${data.titulo}</strong><br><br>
-        ${data.contenido}<br><br>
-        <small>${data.fecha}</small>
-      `;
-    })
-    .catch(() => {
-      document.getElementById("mensaje").innerText =
-        "No se pudo conectar con el backend ❌";
+      const lista = document.getElementById("listaProductos");
+      lista.innerHTML = "";
+      data.forEach(p => {
+        const li = document.createElement("li");
+        li.innerText = `${p.nombre} - $${p.precio} (Stock: ${p.stock})`;
+        lista.appendChild(li);
+      });
     });
-</script>
+}
 
+function agregarProducto() {
+  const nombre = document.getElementById("nombre").value;
+  const precio = document.getElementById("precio").value;
+  const stock = document.getElementById("stock").value;
+
+  fetch(`${backendURL}/productos`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nombre, precio, stock })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("respuesta").innerText = data.mensaje;
+    cargarProductos();
+  })
+  .catch(() => {
+    document.getElementById("respuesta").innerText =
+      "Error al agregar producto ❌";
+  });
+}
+
+cargarProductos();
+</script>
 
 </body>
 </html>
