@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Frontend en la nube</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="card">
+    <h1>Frontend desplegado en Vercel ☁️</h1>
+    <p id="mensaje">Cargando backend...</p>
+  </div>
+
+  <script>
+    fetch("https://backend-render-7qb1.onrender.com")
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("mensaje").innerText = data.mensaje;
+      })
+      .catch(() => {
+        document.getElementById("mensaje").innerText =
+          "Error al conectar con el backend";
+      });
+  </script>
+
+</body>
+</html>
